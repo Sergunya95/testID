@@ -9,14 +9,17 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    //MARK: - Properties
     private let parser = Parser()
     private var hotelsList = Hotels()
     private var activityIndicator: UIActivityIndicatorView!
-//    var detail: HotelInfo? = nil
+    var detail: HotelInfo?
     
+    //MARK: - @IBOutlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortList: UIButton!
    
+    //MARK: - Lifecicle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,6 +28,7 @@ class ViewController: UIViewController {
         activityIndicator = showSpinner(in: view)
     }
     
+    // MARK: - Methods
     private func getHotelsList() {
         parser.getList { data in
             self.hotelsList = data
@@ -33,11 +37,11 @@ class ViewController: UIViewController {
                 self.tableView.reloadData()
             }
         }
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
+        tableView.dataSource = self
+        tableView.delegate = self
     }
     
-    private func setPopupButton() {
+    private func setPopupButton() { 
         let sortByDistance = { (action: UIAction) in
             self.sortByDistance()
         }
@@ -60,15 +64,15 @@ class ViewController: UIViewController {
     
     private func sortByDistance() {
         self.hotelsList.sort{ $0.distance < $1.distance}
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
         }
     }
     
     private func sortBySuitesAvailability() {
-        self.hotelsList.sort{ $0.suitesAvailability.count > $1.suitesAvailability.count}
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+        self.hotelsList.sort{ $0.suitesAvailability.trimmingCharacters(in: .punctuationCharacters).replacingOccurrences(of: ":", with: ", ").stringToArray().count > $1.suitesAvailability.trimmingCharacters(in: .punctuationCharacters).replacingOccurrences(of: ":", with: ", ").stringToArray().count}
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
         }
     }
     
@@ -84,6 +88,7 @@ class ViewController: UIViewController {
     }
 }
 
+// MARK: - DataSource, Delegate
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -92,31 +97,25 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
-//        cell.textLabel?.text = hotelsList[indexPath.row].name
-        cell.nameLabel.text = hotelsList[indexPath.row].name
-        cell.addressLabel.text = hotelsList[indexPath.row].address
-        cell.distanceLabel.text = "Расстояние до центра \(String(hotelsList[indexPath.row].distance)) м"
-        cell.suitesAvailabilityLabel.text = "Свободных номеров: \(String(hotelsList[indexPath.row].suitesAvailability.count))"
-        if hotelsList[indexPath.row].stars < 1 {
-            cell.starsImage.image = UIImage(systemName: "star")
-        } else if  hotelsList[indexPath.row].stars >= 1 {
-            cell.starsImage.image = UIImage(systemName: "star.fill")
-        }
+    
+        let hotel = hotelsList[indexPath.row]
+        cell.configure(with: hotel)
+       
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let hotel = hotelsList[indexPath.row]
+        let detailVC = DetailViewController(hotel: hotel)
+        self.navigationController?.pushViewController(detailVC, animated: true)
         
-        let vc = storyboard?.instantiateViewController(withIdentifier: "Detail") as! DetailViewController
-        let request = URL(string: "https://bitbucket.org/instadevteam/tests/raw/63a9ecea18ca79c275a2eeafd95bc37f857cf2ec/1.2/\(String(describing: hotelsList[indexPath.row].id)).json")
+        let request = URL(string: "https://bitbucket.org/instadevteam/tests/raw/63a9ecea18ca79c275a2eeafd95bc37f857cf2ec/1.2/\(String(describing: hotel.id)).json")
         let task = URLSession.shared.dataTask(with: request!) { data, response, error in
             if let data = data, let hotelInfo = try? JSONDecoder().decode(HotelInfo.self, from: data) {
-                vc.detail = hotelInfo
-                print(hotelInfo.image)
-//                vc.imageLabel?.text = hotelInfo.image
+                detailVC.detail = hotelInfo
             }
         }
         task.resume()
     }
-    
 }
