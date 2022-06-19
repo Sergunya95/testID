@@ -91,8 +91,22 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Список отелей" id="oud-Ro-mKQ">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="3LL-eb-Jao">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="hcJ-zW-KIv">
+                        <barButtonItem key="leftBarButtonItem" title="Item" style="done" id="E7S-ye-ZF0">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="05E-kn-79m">
+                                <rect key="frame" x="20" y="5" width="128" height="34.5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title=" ">
+                                    <imageReference key="image" image="arrow.up.arrow.down" catalog="system" symbolScale="large"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="leftButtonTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="7hU-Zr-Uji"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" id="3LL-eb-Jao">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" showsMenuAsPrimaryAction="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="hcJ-zW-KIv">
                                 <rect key="frame" x="316" y="10" width="78" height="24.5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <menu key="menu" id="Cc4-zg-7as">
@@ -102,15 +116,14 @@
                                     </children>
                                 </menu>
                                 <state key="normal">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <color key="titleShadowColor" white="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <imageReference key="image" image="arrow.up.arrow.down" catalog="system" symbolScale="large" renderingMode="original"/>
                                 </state>
                             </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="sortList" destination="hcJ-zW-KIv" id="uFM-0e-ni7"/>
+                        <outlet property="leftSortListButton" destination="05E-kn-79m" id="jlN-0Z-g76"/>
+                        <outlet property="rightSortListButton" destination="hcJ-zW-KIv" id="uFM-0e-ni7"/>
                         <outlet property="tableView" destination="yxv-cV-89z" id="Xou-r9-4hS"/>
                     </connections>
                 </viewController>
